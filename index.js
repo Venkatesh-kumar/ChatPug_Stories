@@ -27,6 +27,14 @@ async function connect(){
 //connecting to mongodb
 connect();
 
+//Routes
+const StoryRoute = require('./routes/story')
+const MsgsRoute = require('./routes/msgs')
+
+//Routing
+app.use('/story',StoryRoute)
+app.use('/msgs',MsgsRoute)
+
 app.get("/",(req,res)=>{
     res.send("Connected successfully")
 })

@@ -6,7 +6,8 @@ const StorySchema = new Schema({
     avatar:{type:String},
     name:{type:String},
     story:{type:String},
-    likes:{type:Number}
+    likes:{type:Number},
+    to:[String]
 },{timestamps:true})
 
 const Story = mongoose.model('Story',StorySchema)
