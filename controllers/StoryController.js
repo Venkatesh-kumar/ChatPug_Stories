@@ -16,11 +16,10 @@ const index = (req,res,next)=>{
 const addStory = (req,res,next) => {
     let story = new Story({
         uN: req.body.uN,
-        avatar:req.body.avatar,
-        name:req.body.name,
         story:req.body.story,
-        likes:req.body.likes,
-        to:req.body.to
+        location:{
+            coordinates:[parseFloat(req.body.longitude),parseFloat(req.body.latitude)]
+        },
     })
     story.save()
     .then(response => {
@@ -34,16 +33,26 @@ const addStory = (req,res,next) => {
 
 //Return user stories
 const getUserStories = (req,res,nexy)=>{
-    let user = req.body.user
+
     Story.find({
-        to:user,
+        location: {
+            $near: {
+                $geometry: {
+                    type: "Point" ,
+                    coordinates: [parseFloat(req.body.longitude),parseFloat(req.body.latitude)]
+                },
+                $minDistance: 0,
+                $maxDistance: 100 * 1000, //Converting KMS to Meters
+            }
+        },
         "createdAt":{$gt:new Date(Date.now() - 12*60*60 * 1000)}
-    },{uN:1,avatar:1,name:1,story:1,likes:1})
+    },{uN:1,story:1})
     .then(response =>{
         res.json({response})
     })
     .catch(err =>{
         res.json({status:'failed'})
+        console.log(err);
     })
 }
 
