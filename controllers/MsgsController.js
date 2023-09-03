@@ -16,7 +16,8 @@ const index = (req,res,next)=>{
 const addMsg = (req,res,next) => {
     let Msg = new Msgs({
        from:req.body.from,
-       to:req.body.to
+       to:req.body.to,
+       msg:req.body.msg
     })
     Msg.save()
     .then(response => {
@@ -44,11 +45,9 @@ const getUserMsgs = (req,res,next)=>{
 
 //Delete a Msg
 const deleteMsg = (req,res,next)=>{
-    let from = req.body.from
     let to = req.body.to
     Msgs.deleteOne({
-        to:to,
-        from:from
+        to:to
     })
     .then(response => {
         res.json({status: 'success'})
