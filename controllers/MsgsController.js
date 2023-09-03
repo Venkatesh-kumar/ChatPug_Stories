@@ -46,7 +46,7 @@ const getUserMsgs = (req,res,next)=>{
 //Delete a Msg
 const deleteMsg = (req,res,next)=>{
     let to = req.body.to
-    Msgs.deleteOne({
+    Msgs.deleteMany({
         to:to
     })
     .then(response => {
