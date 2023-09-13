@@ -34,18 +34,21 @@ connect();
 //Routes
 const StoryRoute = require('./routes/story')
 const MsgsRoute = require('./routes/msgs')
+const ChatsRoute = require('./routes/chats')
 
 //Routing
 app.use('/story',StoryRoute)
 app.use('/msgs',MsgsRoute)
+app.use('/chats',ChatsRoute)
 
-app.get("/",(req,res)=>{
+app.post("/",(req,res)=>{
+    console.log(req.body);
     res.send("Connected successfully")
 })
-
-
 
 const port = process.env.PORT || 8000;
 httpServer.listen(port,()=>{
     console.log(`Server started in port ${port}`)
 })
+
+getIO();
