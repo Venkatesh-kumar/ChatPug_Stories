@@ -55,6 +55,7 @@ const addChat = async(req,res,next) =>{
                     let Msg = new Msgs({
                         from:uN,
                         to:to,
+                        msg:'Msg'
                      })
                      Msg.save()
 
