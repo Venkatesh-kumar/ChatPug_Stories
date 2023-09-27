@@ -46,6 +46,11 @@ app.post("/",(req,res)=>{
     res.send("Connected successfully")
 })
 
+app.get("/getVersion",(req,res)=>{
+    var response = {"version":process.env.VERSION}
+    res.send(response)
+})
+
 const port = process.env.PORT || 8000;
 httpServer.listen(port,()=>{
     console.log(`Server started in port ${port}`)
