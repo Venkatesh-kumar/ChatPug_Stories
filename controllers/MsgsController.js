@@ -57,6 +57,23 @@ const deleteMsg = (req,res,next)=>{
     })
 }
 
+//Delete a Msg
+const deleteMsgType = (req,res,next)=>{
+    let to = req.body.to
+    let type = req.body.type
+    Msgs.deleteMany({
+        to:to,
+        msg:type
+    })
+    .then(response => {
+        res.json({status: 'success'})
+    })
+    .catch(err => {
+        res.json({status: 'failure'})
+    })
+}
+
+
 module.exports = {
-    index, addMsg, getUserMsgs, deleteMsg
+    index, addMsg, getUserMsgs, deleteMsg, deleteMsgType
 }
