@@ -46,7 +46,7 @@ const getUserStories = (req,res,nexy)=>{
             }
         },
         "createdAt":{$gt:new Date(Date.now() - 12*60*60 * 1000)}
-    },{uN:1,story:1})
+    },{uN:1,story:1},{limit:20})
     .then(response =>{
         res.json({response})
     })
