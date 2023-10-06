@@ -26,11 +26,12 @@ module.exports.initIO = (httpServer) => {
 
     let roomID
     let roomIndex
-
+    let gender
 
     socket.on('join-room',(peerID,user,coun,interest)=>{
         let pID = peerID
         let room
+        gender = user
         if(user == 'male')
         {
           let maleUser
@@ -149,58 +150,60 @@ module.exports.initIO = (httpServer) => {
         socket.to(otherUserId).emit('AcceptPhoto')
     })
 
-      socket.on('disconnect', () => {
-        let uI, uR, uC
-        let room;
-        if(maleUsers.findIndex(a => a.soc === socket.id) !== -1)
-        {gender = 'male'}
-        else if(femaleUsers.findIndex(a => a.soc === socket.id) !== -1)
-        {gender = 'female'}
+    socket.on('disconnect', () => {
+      
+      let uI, uR, uC
+      let room;
+      if(maleUsers.findIndex(a => a.pID === socket.user) !== -1)
+      {gender = 'male'}
+      else if(femaleUsers.findIndex(a => a.pID === socket.user) !== -1)
+      {gender = 'female'}
+      else
+      {gender = ''}
+     
+      if(gender == 'male')
+      {
+        uI = maleUsers.findIndex(a => a.pID === socket.user)
+        uR = maleUsers[uI].room;
+        uC = maleUsers[uI].coun
+        // Check if user is in occupied room or single room
+        if(oR0.findIndex(r => r.rID == uR) !== -1)
+        {
+          socket.to(uR).emit("createMessage", `---Stranger left the chat---`);
+          room = {"rID": uR, "coun": uC}
+          fR0.push(room)
+          oR0.splice(oR0.findIndex(r=> r.rID === uR) , 1)
+        }
         else
-        {gender = ''}
-        if(gender == 'male')
         {
-          uI = maleUsers.findIndex(a => a.soc === socket.id)
-          uR = maleUsers[uI].room;
-          uC = maleUsers[uI].coun
-          // Check if user is in occupied room or single room
-          if(oR0.findIndex(r => r.rID == uR) !== -1)
-          {
-            socket.to(uR).emit("createMessage", `---Stranger left the chat---`);
-            room = {"rID": uR, "coun": uC}
-            fR0.push(room)
-            oR0.splice(oR0.findIndex(r=> r.rID === uR) , 1)
-          }
-          else
-          {
-            mR0.splice(mR0.findIndex(r=> r.rID === uR) , 1)
-          }
-          maleUsers.splice(maleUsers.findIndex(a => a.soc === socket.id) , 1)
-          socket.to(uR).emit("lost")
+          mR0.splice(mR0.findIndex(r=> r.rID === uR) , 1)
         }
-        else if(gender === 'female')
+        maleUsers.splice(maleUsers.findIndex(a => a.pID === socket.user) , 1)
+        socket.to(uR).emit("lost")
+      }
+      else if(gender === 'female')
+      {
+        uI = femaleUsers.findIndex(a => a.pID === socket.user)
+        uR = femaleUsers[uI].room;
+        uC = femaleUsers[uI].coun
+        if(oR0.findIndex(r => r.rID == uR) !== -1)
         {
-          uI = femaleUsers.findIndex(a => a.soc === socket.id)
-          uR = femaleUsers[uI].room;
-          uC = femaleUsers[uI].coun
-          if(oR0.findIndex(r => r.rID == uR) !== -1)
-          {
-            socket.to(uR).emit("createMessage", `---Stranger left the chat---`);
-            room = {"rID": uR, "coun": uC}
-            mR0.push(room);
-            oR0.splice(oR0.findIndex(r=> r.rID === uR) , 1)
-          }
-          else
-          {
-            fR0.splice(fR0.findIndex(r=> r.rID === uR) , 1)
-          }
-          femaleUsers.splice(femaleUsers.findIndex(a => a.soc === socket.id) , 1)
-          socket.to(uR).emit("lost")
+          socket.to(uR).emit("createMessage", `---Stranger left the chat---`);
+          room = {"rID": uR, "coun": uC}
+          mR0.push(room);
+          oR0.splice(oR0.findIndex(r=> r.rID === uR) , 1)
         }
-        console.log("mU:", maleUsers, "fU:", femaleUsers, "mR:", mR0,"fR:", fR0,"oR:", oR0);
-        
-      });
-    
+        else
+        {
+          fR0.splice(fR0.findIndex(r=> r.rID === uR) , 1)
+        }
+        femaleUsers.splice(femaleUsers.findIndex(a => a.pID === socket.user) , 1)
+        socket.to(uR).emit("lost")
+      }
+      console.log("mU:", maleUsers, "fU:", femaleUsers, "mR:", mR0,"fR:", fR0,"oR:", oR0);
+      
+    });
+
   });
 };
 
