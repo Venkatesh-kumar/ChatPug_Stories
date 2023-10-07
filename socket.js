@@ -97,11 +97,9 @@ module.exports.initIO = (httpServer) => {
           }
           femaleUsers.push(femaleUser)
         }
-        console.log("mU:", maleUsers, "fU:", femaleUsers, "mR:", mR0,"fR:", fR0,"oR:", oR0);
         
           setTimeout(()=>{
             let activeUsers = maleUsers.length + femaleUsers.length
-            console.log(activeUsers)
             socket.to(roomID).emit("user-connected", pID);
             socket.to(roomID).emit("activeUsers",activeUsers);
           }, 1000)
@@ -128,7 +126,6 @@ module.exports.initIO = (httpServer) => {
     });
 
     socket.on("ICEcandidate", (data) => {
-      console.log("ICEcandidate data.calleeId", data.calleeId);
       let calleeId = data.calleeId;
       let rtcMessage = data.rtcMessage;
 
@@ -200,7 +197,6 @@ module.exports.initIO = (httpServer) => {
         femaleUsers.splice(femaleUsers.findIndex(a => a.pID === socket.user) , 1)
         socket.to(uR).emit("lost")
       }
-      console.log("mU:", maleUsers, "fU:", femaleUsers, "mR:", mR0,"fR:", fR0,"oR:", oR0);
       
     });
 
