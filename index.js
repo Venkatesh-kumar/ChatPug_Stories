@@ -1,6 +1,8 @@
 const express = require('express')
 var bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+var crypto = require('crypto');
+var Razorpay = require("razorpay");
 const cors = require('cors')
 const { createServer } = require('http');
 require('dotenv').config()
@@ -45,6 +47,37 @@ app.post("/",(req,res)=>{
     console.log(req.body);
     res.send("Connected successfully")
 })
+
+//Razorpay instance
+let instance = new Razorpay({
+
+    key_id:  process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+    // key_id: 'rzp_live_IJrLJQZGPtCCPR',
+    // key_secret: 'CQXUVCMAbo245VIQ0qn6XACa'
+})
+
+//creating order
+app.post("/payment/order",(req,res)=>{
+params=req.body;
+instance.orders.create(params).then((data) => {
+        res.send({"sub":data,"status":"success"});
+}).catch((error) => {
+        res.send({"sub":error,"status":"failed"});
+})
+});
+
+//verifying transcation
+app.post("/payment/verify",(req,res)=>{
+body=req.body.razorpay_order_id + "|" + req.body.razorpay_payment_id;
+var expectedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+                            .update(body.toString())
+                            .digest('hex');
+var response = {"status":"failure"}
+if(expectedSignature === req.body.razorpay_signature)
+response={"status":"success"}
+res.send(response);
+});
 
 app.get("/getVersion",(req,res)=>{
     var response = {"version":process.env.VERSION}
