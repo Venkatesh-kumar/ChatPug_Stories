@@ -51,12 +51,14 @@ app.post("/",(req,res)=>{
 //Razorpay instance
 let instance = new Razorpay({
 
-    key_id:  process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET,
-    // key_id: 'rzp_live_IJrLJQZGPtCCPR',
-    // key_secret: 'CQXUVCMAbo245VIQ0qn6XACa'
+    // key_id:  process.env.RAZORPAY_KEY_ID,
+    // key_secret: process.env.RAZORPAY_KEY_SECRET,
+    key_id: 'rzp_live_IJrLJQZGPtCCPR',
+    key_secret: 'CQXUVCMAbo245VIQ0qn6XACa'
 })
-
+console.log('====================================');
+console.log(instance);
+console.log('====================================');
 //creating order
 app.post("/payment/order",(req,res)=>{
 params=req.body;
